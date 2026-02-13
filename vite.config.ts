@@ -9,15 +9,14 @@ export default defineConfig(({ mode }) => {
   return {
     root: mode === 'production' ? '' : appRoot,
     build: {
+      ssr: true,
+      target: 'node24',
+      minify: false,
       lib: {
-        name: 'ksef-fe-invoice-converter',
         entry: path.resolve(__dirname, libRoot, 'index.ts'),
         outDir: path.resolve(__dirname, 'dist'),
         emptyOutDir: true,
-        formats: ['es', 'umd'],
-        rollupOptions: {
-          external: [/\.spec\.ts$/, /\.test\.ts$/, 'src/app-private', 'src/app-public'],
-        },
+        formats: ['es'],
       },
     },
 
