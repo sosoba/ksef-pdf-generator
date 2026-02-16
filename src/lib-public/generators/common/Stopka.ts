@@ -1,4 +1,4 @@
-import { Content, ContentQr, ContentStack } from 'pdfmake/interfaces';
+import { Content, ContentColumns } from 'pdfmake/interfaces';
 import {
   createHeader,
   createLabelText,
@@ -119,47 +119,53 @@ function generateInformacje(stopka?: Stopka): Content[] {
 function generateQRCodeData(additionalData?: AdditionalDataTypes): Content[] {
   const result: Content = [];
 
-  if (additionalData?.qrCode && additionalData.nrKSeF) {
-    const qrCode: ContentQr | undefined = generateQRCode(additionalData.qrCode);
+  if (additionalData?.qrCode) {
+    const qrCode = generateQRCode(additionalData.qrCode)!;
 
-    result.push(createHeader('Sprawdź, czy Twoja faktura znajduje się w KSeF!'));
-    if (qrCode) {
-      result.push({
-        columns: [
-          {
-            stack: [
-              qrCode,
+    result.push({
+      text: formatText('Zeskanuj kod z obrazka lub kliknij w link w jego podpisie', FormatTyp.Value),
+      marginTop: 5,
+      marginBottom: 5,
+    });
+    const qrRow: ContentColumns = {
+      columns: [
+        {
+          ...qrCode,
+          marginTop: 5,
+          width: '50%',
+          alignment: 'center',
+        },
+      ],
+    };
+    const linkRow: ContentColumns = {
+      columns: [
+        {
+          text: formatText(additionalData.nrKSeF ?? 'OFFLINE', FormatTyp.Default),
+          link: additionalData.qrCode,
+          marginTop: 5,
+          width: '50%',
+          alignment: 'center',
+        },
+      ],
+    };
 
-              {
-                stack: [formatText(additionalData.nrKSeF, FormatTyp.Default)],
-                width: 'auto',
-                alignment: 'center',
-                marginLeft: 10,
-                marginRight: 10,
-                marginTop: 10,
-              } as ContentStack,
-            ],
-            width: 150,
-          } as ContentStack,
-          {
-            stack: [
-              formatText(
-                'Nie możesz zeskanować kodu z obrazka? Kliknij w link weryfikacyjny i przejdź do weryfikacji faktury!',
-                FormatTyp.Value
-              ),
-              {
-                stack: [formatText(additionalData.qrCode, FormatTyp.Link)],
-                marginTop: 5,
-                link: additionalData.qrCode,
-              },
-            ],
-
-            margin: [10, (qrCode.fit ?? 120) / 2 - 30, 0, 0],
-            width: 'auto',
-          } as ContentStack,
-        ],
+    if (additionalData.qrCode2) {
+      qrRow.columns.push({
+        ...generateQRCode(additionalData.qrCode2)!,
+        marginTop: 5,
+        width: '50%',
+        alignment: 'center',
+      });
+      linkRow.columns.push({
+        text: formatText('CERTYFIKAT', FormatTyp.Default),
+        link: additionalData.qrCode2,
+        marginTop: 5,
+        width: '50%',
+        alignment: 'center',
       });
     }
+
+    result.push(qrRow, linkRow);
   }
   return createSection(result, true);
 }
