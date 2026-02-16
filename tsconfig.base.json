@@ -14,6 +14,6 @@
       "@lib-public/*": ["lib-public/*"],
       "@lib-private/*": ["lib-private/*"]
     },
-    "include": ["src"]
-  }
+  },
+  "include": ["src"]
 }
