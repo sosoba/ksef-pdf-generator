@@ -6,31 +6,23 @@ export function stripPrefixes<T>(obj: T): T {
     return obj.map(stripPrefixes) as T;
   } else if (typeof obj === 'object' && obj !== null) {
     return Object.fromEntries(
-      Object.entries(obj).map(([key, value]: [string, T]): [string, T] => [
-        key.includes(':') ? key.split(':')[1] : key,
-        stripPrefixes(value),
-      ])
+      Object.entries(obj).map(([key, value]: [string, T]): [string, T] => {
+        if (key === '_text') {
+          return [
+            key,
+            (Array.isArray(value) ? value.join('') : String(value)).replace(/\s+/g, ' ').trim() as T,
+          ];
+        }
+        return [key.includes(':') ? key.split(':')[1] : key, stripPrefixes(value)];
+      })
     ) as T;
   }
   return obj;
 }
 
-export function parseXML(file: File): Promise<unknown> {
-  return new Promise((resolve, reject): void => {
-    const reader = new FileReader();
+export async function parseXML(file: File): Promise<unknown> {
+  const xmlStr = await file.text();
+  const jsonDoc: Faktura = stripPrefixes(xml2js(xmlStr, { compact: true, cdataKey: '_txt' })) as Faktura;
 
-    reader.onload = function (e: ProgressEvent<FileReader>): void {
-      try {
-        const xmlStr: string = e.target?.result as string;
-        const jsonDoc: Faktura = stripPrefixes(
-          xml2js(xmlStr, { compact: true, cdataKey: '_txt' })
-        ) as Faktura;
-
-        resolve(jsonDoc);
-      } catch (error) {
-        reject(error);
-      }
-    };
-    reader.readAsText(file);
-  });
+  return jsonDoc;
 }
