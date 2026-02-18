@@ -38,21 +38,11 @@ export function generatePodmiot2(podmiot2: Podmiot2): Content[] {
       createLabelText('Numer klienta: ', podmiot2.NrKlienta)
     );
 
-    const daneKontaktowe = getTable(podmiot2.DaneKontaktowe);
-
-    if (daneKontaktowe.length) {
-      result.push(
-        createLabelText(
-          'Faktura dotyczy jednostki podrzędnej JST: ',
-          daneKontaktowe[0].JST?._text === '1' ? 'TAK' : 'NIE'
-        )
-      );
-      result.push(
-        createLabelText(
-          'Faktura dotyczy członka grupy GV: ',
-          daneKontaktowe[0].GV?._text === '1' ? 'TAK' : 'NIE'
-        )
-      );
+    if (podmiot2.JST?._text === '1') {
+      result.push(createLabelText('Faktura dotyczy jednostki podrzędnej JST: ', 'TAK'));
+    }
+    if (podmiot2.GV?._text === '1') {
+      result.push(createLabelText('Faktura dotyczy członka grupy GV: ', 'TAK'));
     }
   }
   return result;

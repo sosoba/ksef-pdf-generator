@@ -16,7 +16,7 @@ export async function generatePDFUPO(file: File): Promise<Blob> {
     pageOrientation: 'landscape',
     footer: function (currentPage: number, pageCount: number) {
       return {
-        text: currentPage.toString() + ' z ' + pageCount,
+        text: `Strona ${currentPage} z ${pageCount}`,
         alignment: Position.RIGHT,
         margin: [0, 0, 20, 0],
       };

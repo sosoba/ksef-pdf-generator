@@ -160,7 +160,10 @@ export function replaceDotWithCommaIfNeeded(value: string | number | undefined):
 }
 
 function dotToComma(value: string): string {
-  return value.replace('.', ',');
+  const parts = value.split('.');
+
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return parts.join(',');
 }
 
 export function hasValue(value: FP | string | number | undefined): boolean {
@@ -274,6 +277,7 @@ export function generateStyle(): Partial<TDocumentDefinitions> {
       GrayBoldTitle: {
         fillColor: '#F6F7FA',
         bold: true,
+        alignment: Position.CENTER,
       },
       GrayTitle: {
         fillColor: '#F6F7FA',

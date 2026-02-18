@@ -54,8 +54,8 @@ export function generateFA3(invoice: Faktura, additionalData: AdditionalDataType
     ...generateStyle(),
     footer: function (currentPage: number, pageCount: number) {
       return {
-        text: `Strona ${currentPage.toString()} z ${pageCount}`,
-        alignment: Position.CENTER,
+        text: `Strona ${currentPage} z ${pageCount}`,
+        alignment: Position.RIGHT,
         margin: [0, 0, 20, 0],
       };
     },
