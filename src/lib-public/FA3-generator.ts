@@ -20,6 +20,7 @@ import { generateStopka } from './generators/common/Stopka';
 import { Faktura } from './types/fa3.types';
 import { ZamowienieKorekta } from './enums/invoice.enums';
 import { AdditionalDataTypes } from './types/common.types';
+import { Position } from '../shared/enums/common.enum';
 
 pdfMake.vfs = pdfFonts.vfs;
 
@@ -51,6 +52,13 @@ export function generateFA3(invoice: Faktura, additionalData: AdditionalDataType
       ...generateStopka(additionalData, invoice.Stopka, invoice.Naglowek, invoice.Fa?.WZ, invoice.Zalacznik),
     ],
     ...generateStyle(),
+    footer: function (currentPage: number, pageCount: number) {
+      return {
+        text: `Strona ${currentPage.toString()} z ${pageCount}`,
+        alignment: Position.CENTER,
+        margin: [0, 0, 20, 0],
+      };
+    },
   };
 
   return pdfMake.createPdf(docDefinition);
