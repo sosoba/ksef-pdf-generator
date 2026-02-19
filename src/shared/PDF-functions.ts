@@ -85,24 +85,28 @@ function formatValue(
         ? (value as string)
         : `${normalizeCurrencySeparator(value)} ${currency}`;
       result.alignment = Position.RIGHT;
+      result.noWrap = true;
       break;
     case FormatTyp.CurrencyAbs:
       result.text = isNaN(Number(value))
         ? (value as string)
         : `${dotToComma(Math.abs(Number(value)).toFixed(2))} ${currency}`;
       result.alignment = Position.RIGHT;
+      result.noWrap = true;
       break;
     case FormatTyp.CurrencyGreater:
       result.text = isNaN(Number(value))
         ? (value as string)
         : `${dotToComma(Number(value).toFixed(2))} ${currency}`;
       result.fontSize = 10;
+      result.noWrap = true;
       break;
     case FormatTyp.Currency6:
       result.text = isNaN(Number(value))
         ? (value as string)
         : `${dotToComma(Number(value).toFixed(6))} ${currency}`;
       result.alignment = Position.RIGHT;
+      result.noWrap = true;
       break;
     case FormatTyp.DateTime:
       result.text = formatDateTime(value as string);
@@ -125,6 +129,7 @@ function formatValue(
     case FormatTyp.Number:
       result.text = replaceDotWithCommaIfNeeded(value);
       result.alignment = Position.RIGHT;
+      result.noWrap = true;
       break;
   }
 }
@@ -160,10 +165,16 @@ export function replaceDotWithCommaIfNeeded(value: string | number | undefined):
 }
 
 function dotToComma(value: string): string {
-  const parts = value.split('.');
+  let [decimal, fractional] = value.split('.');
 
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  return parts.join(',');
+  decimal = decimal.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  if (fractional) {
+    fractional = fractional.replace(/0+$/, '');
+  }
+  if (fractional) {
+    return [decimal, fractional].join(',');
+  }
+  return decimal;
 }
 
 export function hasValue(value: FP | string | number | undefined): boolean {
