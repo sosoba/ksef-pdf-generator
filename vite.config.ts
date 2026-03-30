@@ -8,6 +8,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     root: mode === 'production' ? '' : appRoot,
+    resolve: {
+      alias: {
+        '@shared': path.resolve(__dirname, 'src/shared'),
+      },
+    },
     build: {
       ssr: true,
       target: 'node24',
@@ -35,6 +40,7 @@ export default defineConfig(({ mode }) => {
         provider: 'v8',
         reporter: ['text-summary', 'lcov', 'html'],
       },
+      setupFiles: ['src/shared/mocks/functions.mock.ts'],
     },
 
     plugins: [
