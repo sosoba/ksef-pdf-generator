@@ -1,4 +1,4 @@
-import { Content, ContentColumns } from 'pdfmake/interfaces';
+import { Content, ContentStack } from 'pdfmake/interfaces';
 import {
   createHeader,
   createLabelText,
