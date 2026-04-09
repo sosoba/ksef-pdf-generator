@@ -1,5 +1,4 @@
 ```bash
-git fetch upstream
-git merge upstream/main
+git fetch upstream && git merge upstream/main
 ```
 

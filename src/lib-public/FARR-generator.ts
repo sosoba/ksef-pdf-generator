@@ -15,6 +15,7 @@ import { generateWiersze } from './generators/FA_RR/Wiersze';
 import { AdditionalDataTypes } from './types/common.types';
 import { FaRR } from './types/FaRR.types';
 
+//@ts-expect-error TS2322
 pdfMake.vfs = pdfFonts.vfs;
 
 export function generateFARR(invoice: FaRR, additionalData: AdditionalDataTypes): TCreatedPdf {

@@ -22,6 +22,7 @@ import { ZamowienieKorekta } from './enums/invoice.enums';
 import { AdditionalDataTypes } from './types/common.types';
 import { Position } from '../shared/enums/common.enum';
 
+//@ts-expect-error TS2322
 pdfMake.vfs = pdfFonts.vfs;
 
 export function generateFA3(invoice: Faktura, additionalData: AdditionalDataTypes): TCreatedPdf {
@@ -60,13 +61,6 @@ export function generateFA3(invoice: Faktura, additionalData: AdditionalDataType
       };
     },
     ...generateStyle(),
-    footer: function (currentPage: number, pageCount: number) {
-      return {
-        text: `Strona ${currentPage} z ${pageCount}`,
-        alignment: Position.RIGHT,
-        margin: [0, 0, 20, 0],
-      };
-    },
   };
 
   return pdfMake.createPdf(docDefinition);
