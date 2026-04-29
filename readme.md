@@ -1,4 +1,5 @@
 ```bash
+git remote add upstream https://github.com/CIRFMF/ksef-pdf-generator.git
 git fetch upstream && git merge upstream/main
 ```
 
