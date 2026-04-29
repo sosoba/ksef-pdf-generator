@@ -2,7 +2,9 @@ import pdfMake, { TCreatedPdf } from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { generateStyle, getValue, hasValue } from '../shared/PDF-functions';
-import { TRodzajFaktury } from '../shared/consts/const';
+import { TRodzajFaktury } from '../shared/consts/FA.const';
+import { Position } from '../shared/enums/common.enum';
+import { ZamowienieKorekta } from './enums/invoice.enums';
 import { generateAdnotacje } from './generators/FA1/Adnotacje';
 import { generateDodatkoweInformacje } from './generators/FA1/DodatkoweInformacje';
 import { generatePlatnosc } from './generators/FA1/Platnosc';
@@ -17,9 +19,9 @@ import { generateDaneFaKorygowanej } from './generators/common/DaneFaKorygowanej
 import { generateNaglowek } from './generators/common/Naglowek';
 import { generateRozliczenie } from './generators/common/Rozliczenie';
 import { generateStopka } from './generators/common/Stopka';
-import { Faktura } from './types/fa1.types';
-import { ZamowienieKorekta } from './enums/invoice.enums';
 import { AdditionalDataTypes } from './types/common.types';
+import { Faktura } from './types/fa1.types';
+import { generateWatermark } from '@shared/consts/watermark';
 
 pdfMake.vfs = pdfFonts.vfs;
 
@@ -28,6 +30,7 @@ export function generateFA1(invoice: Faktura, additionalData: AdditionalDataType
     invoice.Fa?.RodzajFaktury?._text == TRodzajFaktury.KOR && hasValue(invoice.Fa?.OkresFaKorygowanej);
   const rabatOrRowsInvoice: Content = isKOR_RABAT ? generateRabat(invoice.Fa!) : generateWiersze(invoice.Fa!);
   const docDefinition: TDocumentDefinitions = {
+    ...generateWatermark(additionalData?.watermark),
     content: [
       ...generateNaglowek(invoice.Fa, additionalData),
       generateDaneFaKorygowanej(invoice.Fa),
@@ -50,6 +53,13 @@ export function generateFA1(invoice: Faktura, additionalData: AdditionalDataType
       generateWarunkiTransakcji(invoice.Fa?.WarunkiTransakcji),
       ...generateStopka(additionalData, invoice.Stopka, invoice.Naglowek, invoice.Fa?.WZ),
     ],
+    footer: (currentPage, pageCount) => {
+      return {
+        text: currentPage.toString() + ' z ' + pageCount,
+        alignment: Position.RIGHT,
+        margin: [0, 0, 40, 0],
+      };
+    },
     ...generateStyle(),
   };
 

@@ -7,6 +7,9 @@ import { Faktura as Faktura3 } from './types/fa3.types';
 import { parseXML } from '../shared/XML-parser';
 import { TCreatedPdf } from 'pdfmake/build/pdfmake';
 import { AdditionalDataTypes } from './types/common.types';
+import { generateFARR } from './FARR-generator';
+import { FaRR } from './types/FaRR.types';
+import { initI18next } from "./i18n/i18n-init";
 
 export async function generateInvoice(
   file: File,
@@ -28,6 +31,8 @@ export async function generateInvoice(
 
   let pdf: TCreatedPdf;
 
+  await initI18next();
+
   return new Promise((resolve): void => {
     switch (wersja) {
       case 'FA (1)':
@@ -39,7 +44,12 @@ export async function generateInvoice(
       case 'FA (3)':
         pdf = generateFA3((xml as any).Faktura as Faktura3, additionalData);
         break;
+      case 'FA_RR (1)':
+      case 'FA_RR(1)':
+        pdf = generateFARR((xml as any).Faktura as FaRR, additionalData);
+        break;
     }
+
     switch (formatType) {
       case 'blob':
         pdf.getBlob((blob: Blob): void => {
